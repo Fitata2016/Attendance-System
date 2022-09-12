@@ -63,15 +63,10 @@ const updateAttendance = async (req, res) => {
         status: "error",
         message: "attendance not found",
       });
-    } else if (attendance.status === "CANCELLED") {
+    } else if (attendance.status !== "WORKING") {
       return res.status(400).json({
         status: "error",
-        message: "this attendance was cancelled",
-      });
-    } else if (attendance.status === "OUT") {
-      return res.status(400).json({
-        status: "error",
-        message: "this attendance is already out",
+        message: "this attendance is status cancelled or out",
       });
     } else {
       await attendance.update({
@@ -99,15 +94,13 @@ const deleteAttendance = async (req, res) => {
         status: "error",
         message: "attendance not found",
       });
-    } else if (attendance.status === "OUT") {
+    } else if (
+      attendance.status === "CANCELLED" ||
+      attendance.status === "OUT"
+    ) {
       return res.status(404).json({
         status: "error",
-        message: "attendance OUT, is not posible to cancel",
-      });
-    } else if (attendance.status === "CANCELLED") {
-      return res.status(404).json({
-        status: "error",
-        message: "this attendance was already cancelled",
+        message: "The attendance is not posible to cancel",
       });
     } else {
       await attendance.update({
